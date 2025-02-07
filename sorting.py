@@ -1,12 +1,17 @@
 import pygame
 import random
+import time
 
 WINDOW_SIZE = 640
 WINDOW = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
 #Colors
 YELLOW = "#FFFF00"
-BLACK = (0,0,0)
-WHITE = (0,0,0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+BLACK = (0, 0, 0)
+PURPLE = (128, 0, 128)
+GREY = (170, 170, 170)
+LIGHT_BLUE = (64, 224, 208)
 
 class Rectangle:
     def __init__(self, color, x, width, height):
@@ -14,6 +19,18 @@ class Rectangle:
         self.x = x
         self.width = width
         self.height = height
+
+    def select(self):
+        self.color = BLUE
+
+    def unselect(self):
+        self.color = YELLOW
+
+    def set_smallest(self):
+        self.color = LIGHT_BLUE
+
+    def set_sorted(self):
+        self.color = GREEN
 
 # FUNCTIONS
 def create_rects(num_rects):
@@ -45,20 +62,42 @@ def draw_rects(_rects):
 
 def selection_sort(_rects):
     num_rects = len(_rects)
+    start_time = time.time() #Start timing
+
     for i in range(num_rects): #Iterate over number of objects in _rects
         for j in range(i + 1, num_rects):
-            draw_rects(_rects)
             if _rects[j].height < _rects[i].height:
                 _rects[j].x, _rects[i].x = _rects[i].x, _rects[j].x
                 _rects[j], _rects[i] = _rects[i], _rects[j]
+            draw_rects(_rects)
             yield
-    draw_rects(_rects)
+    end_time = time.time()  # Stop timing
+    print("Execution Time:", end_time - start_time, "seconds")
+
+
+def bubble_sort(_rects):
+    num_rects = len(_rects)
+    start_time = time.time()  # Start timing
+    for i in range(num_rects - 1):
+        for j in range(num_rects - i - 1):
+            rects[j].select(), rects[j+1].select()
+            if _rects[j].height > _rects[j+1].height:
+                _rects[j+1].x, _rects[j].x = _rects[j].x, _rects[j+1].x
+                _rects[j+1], _rects[j] = _rects[j], _rects[j+1]
+            rects[j].unselect()
+            draw_rects(_rects)
+            time.sleep(.0005)
+            yield
+    for k in range(num_rects):
+        rects[k].set_sorted()
+    end_time = time.time()  # Stop timing
+    print("Execution Time:", end_time - start_time, "seconds")
 
 if __name__ == '__main__':
     #Init Objects
     rects = create_rects(100)
     draw_rects(rects)
-    sorting_generator = selection_sort(rects)
+    sorting_generator = bubble_sort(rects)
 
     running = True
     sorting = False
